@@ -1,6 +1,20 @@
-const Dollar = require('./Dollar')
+const Money = require('./Money')
+
 test('5 dollars * 2 = 10 dollars', () => {
-    let fiver = new Dollar(5)
-    let tenner = fiver.times(2)
-    expect(tenner.amount).toBe(10)
+    const fiveDollars = new Money(5, 'USD')
+    const tenDollars = new Money(10, 'USD')
+    expect(fiveDollars.times(2)).toStrictEqual(tenDollars)
 });
+
+test('10 euros * 2 = 20 euros', () => {
+    const tenEuros = new Money(10, 'EUR')
+    const twentyEuros = new Money(20, 'EUR')
+    expect(tenEuros.times(2)).toStrictEqual(twentyEuros)
+});
+
+test('4002 KRW / 4 equals 1000.5 KRW', () => {
+    const originalMoney = new Money(4002, 'KRW')
+    const newMoney = originalMoney.divide(4)
+    const expectedMoney = new Money(1000.5, 'KRW')
+    expect(newMoney).toStrictEqual(expectedMoney)
+})
