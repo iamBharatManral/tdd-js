@@ -25,6 +25,19 @@ describe('Money Tests', () => {
         expect(portfolio.evaluate('USD')).toStrictEqual(fifteenDollars)
     })
 
+    test('addition of dollars and euros', () => {
+        const fiveDollars = new Money(5, 'USD')
+        const tenEuros = new Money(10, 'EUR')
+
+        const portfolio = new Portfolio()
+        portfolio.add(fiveDollars)
+        portfolio.add(tenEuros)
+
+        const expectedValue = new Money(17, 'USD')
+        const actualValue = portfolio.evaluate('USD')
+        expect(expectedValue).toStrictEqual(actualValue)
+    })
+
 })
 
 
