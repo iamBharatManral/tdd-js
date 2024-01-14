@@ -1,7 +1,13 @@
 const Money = require('./Money')
 const Portfolio = require('./Portfolio')
-
+const Bank = require('./Bank')
 describe('Money Tests', () => {
+    let bank;
+    beforeAll(() => {
+        bank = new Bank()
+        bank.addExchangeRate("EUR", "USD", 1.2)
+        bank.addExchangeRate("USD", "KRW", 1100)
+    })
     test('10 euros * 2 = 20 euros', () => {
         const tenEuros = new Money(10, 'EUR')
         const twentyEuros = new Money(20, 'EUR')
@@ -22,7 +28,8 @@ describe('Money Tests', () => {
         const fifteenDollars = new Money(15, 'USD')
         portfolio.add(fiveDollars)
         portfolio.add(tenDollars)
-        expect(portfolio.evaluate('USD')).toStrictEqual(fifteenDollars)
+        const bank = new Bank()
+        expect(portfolio.evaluate(bank, 'USD')).toStrictEqual(fifteenDollars)
     })
 
     test('addition of dollars and euros', () => {
@@ -34,7 +41,7 @@ describe('Money Tests', () => {
         portfolio.add(tenEuros)
 
         const expectedValue = new Money(17, 'USD')
-        const actualValue = portfolio.evaluate('USD')
+        const actualValue = portfolio.evaluate(bank,'USD')
         expect(expectedValue).toStrictEqual(actualValue)
     })
 
@@ -47,7 +54,7 @@ describe('Money Tests', () => {
         portfolio.add(elevenHundredWon)
 
         const expectedValue = new Money(2200, 'KRW')
-        const actualValue = portfolio.evaluate('KRW')
+        const actualValue = portfolio.evaluate(bank, 'KRW')
 
         expect(expectedValue).toStrictEqual(actualValue)
     })
@@ -63,9 +70,21 @@ describe('Money Tests', () => {
         portfolio.add(oneWon)
 
         const expectedErrorMessage = new Error('Missing exchange rate(s):[USD->Kalganid,EUR->Kalganid,KRW->Kalganid,]')
-        expect(() => portfolio.evaluate('Kalganid')).toThrow(expectedErrorMessage)
+        expect(portfolio.evaluate(bank,'Kalganid')).toStrictEqual(expectedErrorMessage)
     })
 
+    test('conversion', () => {
+        const tenEuros = new Money(10, 'EUR')
+        const actualConvertedMoney = bank.convert(tenEuros, 'USD')
+        expect(new Money(12, 'USD')).toStrictEqual(actualConvertedMoney)
+    })
+
+    test('conversion with missing exchange rate', () => {
+        const tenEuros = new Money(10, 'EUR')
+        const expectedErrorMessage = new Error("EUR->Kalganid")
+        const actualErrorMessage = bank.convert(tenEuros, 'Kalganid')
+        expect(actualErrorMessage).toStrictEqual(expectedErrorMessage)
+    })
 })
 
 

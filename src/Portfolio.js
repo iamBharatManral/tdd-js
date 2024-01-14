@@ -10,21 +10,16 @@ class Portfolio{
     add(...moneys){
         this.moneys = this.moneys.concat(...moneys)
     }
-    convert(money, currency){
-        if(money.currency === currency) return money.amount
-        const exchangeRate = this.exchangeRates[money.currency + "->" + currency]
-        return money.amount * exchangeRate
-    }
-    evaluate(currency){
+    evaluate(bank, currency){
         let total = 0
         const failedConversions = []
         for(const money of this.moneys){
-            const convertedMoney = this.convert(money, currency)
-            if(Number.isNaN(convertedMoney)){
-                failedConversions.push(money.currency + "->" + currency)
+            const convertedMoney = bank.convert(money, currency)
+            if(convertedMoney instanceof Error){
+                failedConversions.push(convertedMoney.message)
                 continue
             }
-            total += convertedMoney
+            total += convertedMoney.amount
         }
         if(failedConversions.length ===0) return new Money(total, currency)
         let failures = "["
@@ -32,7 +27,7 @@ class Portfolio{
             failures += failure + ","
         }
         failures += "]"
-        throw new Error('Missing exchange rate(s):' + failures)
+        return new Error('Missing exchange rate(s):' + failures)
     }
 }
 
