@@ -16,7 +16,23 @@ class Portfolio{
         return money.amount * exchangeRate
     }
     evaluate(currency){
-        return new Money(this.moneys.reduce((sum, money) => sum + this.convert(money, currency), 0), currency)
+        let total = 0
+        const failedConversions = []
+        for(const money of this.moneys){
+            const convertedMoney = this.convert(money, currency)
+            if(Number.isNaN(convertedMoney)){
+                failedConversions.push(money.currency + "->" + currency)
+                continue
+            }
+            total += convertedMoney
+        }
+        if(failedConversions.length ===0) return new Money(total, currency)
+        let failures = "["
+        for(const failure of failedConversions){
+            failures += failure + ","
+        }
+        failures += "]"
+        throw new Error('Missing exchange rate(s):' + failures)
     }
 }
 

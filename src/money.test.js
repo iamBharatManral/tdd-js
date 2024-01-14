@@ -52,6 +52,20 @@ describe('Money Tests', () => {
         expect(expectedValue).toStrictEqual(actualValue)
     })
 
+    test('addition with multiple missing exchange rates', () => {
+        const oneDollar = new Money(1, 'USD')
+        const oneEuro = new Money(1, 'EUR')
+        const oneWon = new Money(1, 'KRW')
+
+        const portfolio = new Portfolio()
+        portfolio.add(oneDollar)
+        portfolio.add(oneEuro)
+        portfolio.add(oneWon)
+
+        const expectedErrorMessage = new Error('Missing exchange rate(s):[USD->Kalganid,EUR->Kalganid,KRW->Kalganid,]')
+        expect(() => portfolio.evaluate('Kalganid')).toThrow(expectedErrorMessage)
+    })
+
 })
 
 
