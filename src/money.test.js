@@ -3,7 +3,7 @@ const Portfolio = require('./Portfolio')
 const Bank = require('./Bank')
 describe('Money Tests', () => {
     let bank;
-    beforeAll(() => {
+    beforeEach(() => {
         bank = new Bank()
         bank.addExchangeRate("EUR", "USD", 1.2)
         bank.addExchangeRate("USD", "KRW", 1100)
@@ -74,9 +74,14 @@ describe('Money Tests', () => {
     })
 
     test('conversion', () => {
-        const tenEuros = new Money(10, 'EUR')
-        const actualConvertedMoney = bank.convert(tenEuros, 'USD')
+        let tenEuros = new Money(10, 'EUR')
+        let actualConvertedMoney = bank.convert(tenEuros, 'USD')
         expect(new Money(12, 'USD')).toStrictEqual(actualConvertedMoney)
+
+        bank.addExchangeRate('EUR', 'USD', 1.3)
+        actualConvertedMoney = bank.convert(tenEuros, 'USD')
+        expect(new Money(13, 'USD')).toStrictEqual(actualConvertedMoney)
+
     })
 
     test('conversion with missing exchange rate', () => {
@@ -84,6 +89,12 @@ describe('Money Tests', () => {
         const expectedErrorMessage = new Error("EUR->Kalganid")
         const actualErrorMessage = bank.convert(tenEuros, 'Kalganid')
         expect(actualErrorMessage).toStrictEqual(expectedErrorMessage)
+    })
+
+    test('what is the conversion rate from euro to usd', () => {
+        const tenEuros = new Money(10, 'EUR')
+        actualConvertedMoney = bank.convert(tenEuros, 'USD')
+        expect(new Money(12, 'USD')).toStrictEqual(actualConvertedMoney)
     })
 })
 
