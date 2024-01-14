@@ -1,0 +1,27 @@
+name: JavaScript CI
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run test
+        shell: bash
+      - name: Run tests randomly
+        run: npm run test:random
+        shell: bash
