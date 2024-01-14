@@ -38,6 +38,20 @@ describe('Money Tests', () => {
         expect(expectedValue).toStrictEqual(actualValue)
     })
 
+    test('addition of dollars and wons', () => {
+        const oneDollar = new Money(1, "USD")
+        const elevenHundredWon = new Money(1100, "KRW")
+
+        const portfolio = new Portfolio()
+        portfolio.add(oneDollar)
+        portfolio.add(elevenHundredWon)
+
+        const expectedValue = new Money(2200, 'KRW')
+        const actualValue = portfolio.evaluate('KRW')
+
+        expect(expectedValue).toStrictEqual(actualValue)
+    })
+
 })
 
 
